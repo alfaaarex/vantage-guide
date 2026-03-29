@@ -1,0 +1,1868 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Carcino Vantage — Developer Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,900;1,9..144,300;1,9..144,600;1,9..144,900&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --paper: #f7f4ef;
+    --ink: #0e0c0a;
+    --mid: #8a8078;
+    --rule: rgba(14,12,10,0.12);
+    --accent: #9875c1;
+    --accent-dim: rgba(152,117,193,0.12);
+    --accent-glow: rgba(152,117,193,0.3);
+    --red: #c44;
+    --green: #2a8a4a;
+    --amber: #b07020;
+    --blue: #2060c0;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── LAYOUT ── */
+  .shell { display: flex; min-height: 100vh; }
+
+  /* ── NAV ── */
+  nav {
+    width: 260px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 1px solid var(--rule);
+    background: #f0ece4;
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: thin;
+  }
+  nav::-webkit-scrollbar { width: 4px; }
+  nav::-webkit-scrollbar-thumb { background: var(--rule); }
+
+  .nav-header {
+    padding: 20px 20px 14px;
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 0;
+    background: #f0ece4;
+    z-index: 10;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .nav-logo-icon {
+    width: 22px;
+    height: 22px;
+    background: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--paper);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+  .nav-title {
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .nav-subtitle {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+
+  .nav-section-label {
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+    padding: 14px 20px 4px;
+  }
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 20px;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--mid);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+    border-left: 2px solid transparent;
+  }
+  .nav-link:hover { color: var(--ink); background: rgba(14,12,10,0.04); }
+  .nav-link.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-dim); }
+  .nav-link .dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+    opacity: 0.5;
+  }
+  .nav-link.active .dot { opacity: 1; }
+
+  /* ── MAIN ── */
+  main {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    border-bottom: 1px solid var(--rule);
+    padding: 60px 64px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-eyebrow::after {
+    content: '';
+    display: block;
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.4;
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-lead {
+    font-size: 13px;
+    color: var(--mid);
+    max-width: 540px;
+    line-height: 1.8;
+    letter-spacing: 0.03em;
+  }
+  .hero-meta {
+    margin-top: 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .hero-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mid);
+    border: 1px solid var(--rule);
+    padding: 4px 10px;
+  }
+  .hero-badge span { color: var(--ink); font-weight: 500; }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 56px 64px;
+    border-bottom: 1px solid var(--rule);
+    animation: fadeUp 0.5s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .section-num {
+    font-family: 'Fraunces', serif;
+    font-size: 11px;
+    font-style: italic;
+    color: var(--accent);
+    opacity: 0.6;
+    width: 28px;
+    flex-shrink: 0;
+  }
+  .section h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .section-intro {
+    font-size: 12.5px;
+    color: var(--mid);
+    line-height: 1.8;
+    max-width: 640px;
+    margin-bottom: 32px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── RULE ── */
+  .triple-rule { margin: 0 0 32px; }
+  .triple-rule div:nth-child(1) { height: 1px; background: var(--rule); }
+  .triple-rule div:nth-child(2) { height: 2.5px; background: var(--ink); margin: 2px 0; }
+  .triple-rule div:nth-child(3) { height: 1px; background: var(--rule); }
+
+  /* ── CARDS ── */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-bottom: 32px; }
+  .card { background: var(--paper); padding: 20px; transition: background 0.15s; }
+  .card:hover { background: var(--accent-dim); }
+  .card-icon { font-size: 18px; margin-bottom: 10px; }
+  .card-title { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); margin-bottom: 6px; }
+  .card-body { font-size: 11px; color: var(--mid); line-height: 1.7; }
+
+  /* ── FILE TREE ── */
+  .tree {
+    font-size: 11px;
+    border: 1px solid var(--rule);
+    background: #0e0c0a;
+    color: #c8c0b4;
+    padding: 20px 24px;
+    overflow-x: auto;
+    line-height: 2;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .tree::before {
+    content: 'PROJECT STRUCTURE';
+    position: absolute;
+    top: 8px; right: 12px;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    color: #4a4840;
+  }
+  .tree .dir { color: #aa7fdb; }
+  .tree .file { color: #c8c0b4; }
+  .tree .comment { color: #4a6060; font-style: italic; }
+  .tree .special { color: #7faadb; }
+
+  /* ── CODE ── */
+  pre {
+    background: #0e0c0a;
+    color: #c8c0b4;
+    padding: 20px 24px;
+    overflow-x: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 11.5px;
+    line-height: 1.8;
+    border: 1px solid var(--rule);
+    margin: 12px 0;
+    position: relative;
+  }
+  pre .label {
+    position: absolute;
+    top: 8px; right: 12px;
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #4a4840;
+  }
+  .kw  { color: #aa7fdb; }
+  .str { color: #7faa6a; }
+  .cmt { color: #4a6060; font-style: italic; }
+  .fn  { color: #7faadb; }
+  .tp  { color: #dba070; }
+  .num { color: #db9060; }
+
+  /* ── ENV TABLE ── */
+  .env-table { width: 100%; border-collapse: collapse; border: 1px solid var(--rule); margin-bottom: 24px; }
+  .env-table th {
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 8.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 500;
+  }
+  .env-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--rule);
+    font-size: 11.5px;
+    vertical-align: top;
+  }
+  .env-table tr:last-child td { border-bottom: none; }
+  .env-table tr:nth-child(even) td { background: rgba(14,12,10,0.03); }
+  .env-table code { font-family: 'DM Mono', monospace; font-size: 11px; background: var(--accent-dim); padding: 1px 5px; color: var(--accent); }
+  .req-badge { display: inline-block; font-size: 8px; letter-spacing: 0.12em; padding: 1px 6px; text-transform: uppercase; font-weight: 600; }
+  .req-badge.required { background: rgba(196,68,68,0.12); color: var(--red); }
+  .req-badge.optional { background: rgba(42,138,74,0.1); color: var(--green); }
+
+  /* ── API TABLE ── */
+  .api-table { width: 100%; border-collapse: collapse; border: 1px solid var(--rule); margin-bottom: 32px; }
+  .api-table th {
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 8.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 9px 14px;
+    text-align: left;
+    font-weight: 500;
+  }
+  .api-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--rule);
+    font-size: 11.5px;
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  .api-table tr:last-child td { border-bottom: none; }
+  .api-table tr:hover td { background: var(--accent-dim); }
+  .method {
+    display: inline-block;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 2px 7px;
+    font-family: 'DM Mono', monospace;
+  }
+  .method.GET    { background: rgba(42,138,74,0.12); color: var(--green); }
+  .method.POST   { background: rgba(32,96,192,0.12); color: var(--blue); }
+  .method.PATCH  { background: rgba(176,112,32,0.12); color: var(--amber); }
+  .method.DELETE { background: rgba(196,68,68,0.12); color: var(--red); }
+  .route-path { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--ink); }
+  .route-path em { font-style: normal; color: var(--accent); }
+
+  /* ── INLINE CODE ── */
+  code {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    padding: 1px 5px;
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-dim);
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .callout.warn { border-left-color: var(--amber); background: rgba(176,112,32,0.08); }
+  .callout.danger { border-left-color: var(--red); background: rgba(196,68,68,0.06); }
+  .callout.success { border-left-color: var(--green); background: rgba(42,138,74,0.08); }
+  .callout strong { color: var(--ink); }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin: 20px 0;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+  }
+  .flow-step {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 8px 14px;
+    white-space: nowrap;
+    position: relative;
+  }
+  .flow-step.accent { background: var(--accent); }
+  .flow-step.green  { background: var(--green); }
+  .flow-step.amber  { background: var(--amber); }
+  .flow-step.red    { background: var(--red); }
+  .flow-arrow {
+    font-size: 14px;
+    color: var(--mid);
+    padding: 0 4px;
+    opacity: 0.5;
+  }
+
+  /* ── STATUS CHIPS ── */
+  .statuses { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  .status-chip {
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid currentColor;
+    font-weight: 500;
+  }
+
+  /* ── DEPT GRID ── */
+  .dept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-bottom: 24px; }
+  .dept-card { background: var(--paper); padding: 16px 18px; }
+  .dept-card:hover { background: var(--accent-dim); }
+  .dept-name { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; color: var(--ink); text-transform: uppercase; margin-bottom: 4px; }
+  .dept-key { font-size: 10px; color: var(--mid); font-family: 'DM Mono', monospace; }
+
+  /* ── TYPE TABLE ── */
+  .type-block {
+    border: 1px solid var(--rule);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .type-block-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 8px 16px;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .type-block-header span { color: var(--accent); }
+  .type-fields { padding: 12px 0; }
+  .type-field {
+    display: grid;
+    grid-template-columns: 160px 120px 1fr;
+    gap: 12px;
+    padding: 6px 16px;
+    font-size: 11.5px;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+  .type-field:last-child { border-bottom: none; }
+  .field-name { color: var(--ink); font-weight: 500; font-family: 'DM Mono', monospace; }
+  .field-type { color: var(--accent); font-size: 11px; }
+  .field-desc { color: var(--mid); font-size: 11px; }
+
+  /* ── PROGRESS ── */
+  .progress-bar { height: 3px; background: var(--rule); margin-bottom: 4px; }
+  .progress-fill { height: 100%; background: var(--accent); transition: width 1s ease; }
+
+  /* ── SEARCH ── */
+  #search-box {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink);
+    outline: none;
+    letter-spacing: 0.04em;
+  }
+  #search-box:focus { border-bottom-color: var(--accent); }
+  #search-box::placeholder { color: var(--mid); }
+
+  /* ── STICKY HEADER ── */
+  .section-sticky {
+    position: sticky;
+    top: 0;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 64px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .section-sticky .breadcrumb { display: flex; gap: 8px; align-items: center; }
+  .section-sticky .back-top { cursor: pointer; color: var(--accent); text-decoration: none; font-size: 8px; }
+
+  /* ── TABLE OF CONTENTS (interactive) ── */
+  .toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-bottom: 40px; }
+  .toc-item {
+    background: var(--paper);
+    padding: 14px 18px;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    transition: background 0.12s;
+  }
+  .toc-item:hover { background: var(--accent-dim); }
+  .toc-num { font-family: 'Fraunces', serif; font-size: 24px; font-style: italic; color: var(--accent); opacity: 0.3; line-height: 1; margin-bottom: 4px; }
+  .toc-label { font-size: 12px; font-weight: 500; color: var(--ink); letter-spacing: 0.02em; }
+  .toc-desc { font-size: 10px; color: var(--mid); margin-top: 3px; }
+
+  /* ── COLLAPSIBLE ── */
+  details { border: 1px solid var(--rule); margin-bottom: 10px; }
+  details summary {
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    transition: background 0.12s;
+  }
+  details summary:hover { background: var(--accent-dim); }
+  details summary::before { content: '▶'; font-size: 8px; color: var(--accent); transition: transform 0.2s; flex-shrink: 0; }
+  details[open] summary::before { transform: rotate(90deg); }
+  details[open] summary { border-bottom: 1px solid var(--rule); }
+  details .detail-body { padding: 16px; font-size: 12px; color: var(--mid); line-height: 1.8; }
+  details .detail-body p + p { margin-top: 10px; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--rule); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 780px) {
+    nav { display: none; }
+    .hero, .section { padding: 32px 24px; }
+    .section-sticky { padding: 10px 24px; }
+    .toc-grid { grid-template-columns: 1fr; }
+    .type-field { grid-template-columns: 1fr 1fr; }
+    .type-field .field-desc { grid-column: 1 / -1; }
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 32px 64px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--mid);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── HIGHLIGHT SEARCH ── */
+  mark { background: var(--accent-glow); color: var(--ink); padding: 0 2px; }
+
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ══ NAV ══════════════════════════════════════════════════════ -->
+<nav>
+  <div class="nav-header">
+    <div class="nav-logo">
+      <div class="nav-logo-icon">CV</div>
+      <div>
+        <div class="nav-title">Carcino Vantage</div>
+      </div>
+    </div>
+    <div class="nav-subtitle">Developer Guide · v0.1.0</div>
+    <input id="search-box" type="text" placeholder="Search this doc…" autocomplete="off" />
+  </div>
+
+  <div class="nav-section-label">Overview</div>
+  <a href="#overview" class="nav-link active"><span class="dot"></span>Overview</a>
+  <a href="#what-is-this" class="nav-link"><span class="dot"></span>What is Carcino Vantage?</a>
+  <a href="#tech-stack" class="nav-link"><span class="dot"></span>Tech Stack</a>
+
+  <div class="nav-section-label">Getting Started</div>
+  <a href="#setup" class="nav-link"><span class="dot"></span>Local Setup</a>
+  <a href="#env-vars" class="nav-link"><span class="dot"></span>Environment Variables</a>
+  <a href="#deployment" class="nav-link"><span class="dot"></span>Deployment</a>
+
+  <div class="nav-section-label">Architecture</div>
+  <a href="#file-structure" class="nav-link"><span class="dot"></span>File Structure</a>
+  <a href="#auth" class="nav-link"><span class="dot"></span>Auth System</a>
+  <a href="#database" class="nav-link"><span class="dot"></span>Database (Supabase)</a>
+  <a href="#api-routes" class="nav-link"><span class="dot"></span>API Routes</a>
+
+  <div class="nav-section-label">Features</div>
+  <a href="#editor" class="nav-link"><span class="dot"></span>The Editor</a>
+  <a href="#dashboard" class="nav-link"><span class="dot"></span>Dashboard & Departments</a>
+  <a href="#tasks" class="nav-link"><span class="dot"></span>Task System</a>
+  <a href="#pwa" class="nav-link"><span class="dot"></span>PWA & Push Notifications</a>
+  <a href="#themes" class="nav-link"><span class="dot"></span>Theming</a>
+
+  <div class="nav-section-label">Reference</div>
+  <a href="#types" class="nav-link"><span class="dot"></span>TypeScript Types</a>
+  <a href="#utils" class="nav-link"><span class="dot"></span>Utility Functions</a>
+  <a href="#gotchas" class="nav-link"><span class="dot"></span>Known Gotchas</a>
+</nav>
+
+<!-- ══ MAIN ══════════════════════════════════════════════════════ -->
+<main id="main-content">
+
+  <!-- HERO -->
+  <div class="hero" id="overview">
+    <div class="hero-eyebrow">Developer Reference Guide</div>
+    <h1>Carcino<br/><em>Vantage</em></h1>
+    <p class="hero-lead">
+      A full-stack internal workspace platform built for The Carcino Foundation.
+      Covers every department — writers, designers, developers, marketing, and leadership —
+      in a single Next.js application backed by Supabase.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-badge">Framework <span>Next.js 16</span></div>
+      <div class="hero-badge">Language <span>TypeScript</span></div>
+      <div class="hero-badge">Database <span>Supabase (Postgres)</span></div>
+      <div class="hero-badge">Auth <span>JWT + bcrypt</span></div>
+      <div class="hero-badge">Deploy <span>Vercel</span></div>
+    </div>
+  </div>
+
+  <!-- SECTION 0: WHAT IS THIS -->
+  <div class="section-sticky">
+    <div class="breadcrumb">
+      <span>Carcino Vantage</span>
+      <span>›</span>
+      <span id="current-section">Overview</span>
+    </div>
+    <a href="#overview" class="back-top">↑ top</a>
+  </div>
+
+  <section class="section" id="what-is-this">
+    <div class="section-header">
+      <div class="section-num">00</div>
+      <h2>What is this project?</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">
+      Carcino Vantage is the internal operating system for The Carcino Foundation.
+      It's not a single tool — it's a multi-department platform where every team
+      has a custom dashboard, and all content flows through a shared editorial pipeline.
+    </p>
+
+    <div class="toc-grid">
+      <a href="#editor" class="toc-item">
+        <div class="toc-num">01</div>
+        <div class="toc-label">Markdown Editor</div>
+        <div class="toc-desc">CodeMirror 6 with live preview, tabs, auto-save, and DOCX import</div>
+      </a>
+      <a href="#dashboard" class="toc-item">
+        <div class="toc-num">02</div>
+        <div class="toc-label">Department Dashboards</div>
+        <div class="toc-desc">5 departments, each with a unique dashboard. Role-gated content.</div>
+      </a>
+      <a href="#tasks" class="toc-item">
+        <div class="toc-num">03</div>
+        <div class="toc-label">Task & Assignment System</div>
+        <div class="toc-desc">Work assignments with statuses, proofreading queues, and approval flows</div>
+      </a>
+      <a href="#pwa" class="toc-item">
+        <div class="toc-num">04</div>
+        <div class="toc-label">PWA + Push Notifications</div>
+        <div class="toc-desc">Installable app with Serwist service worker and VAPID push</div>
+      </a>
+      <a href="#auth" class="toc-item">
+        <div class="toc-num">05</div>
+        <div class="toc-label">Auth System</div>
+        <div class="toc-desc">Email + password with bcrypt, JWT tokens, httpOnly cookies</div>
+      </a>
+      <a href="#themes" class="toc-item">
+        <div class="toc-num">06</div>
+        <div class="toc-label">Theming Engine</div>
+        <div class="toc-desc">4 paired dark/light themes applied via CSS variables on &lt;html&gt;</div>
+      </a>
+    </div>
+
+    <div class="callout">
+      <strong>Who reads this doc?</strong> New engineers joining the Foundation's dev team,
+      or anyone who needs to understand how the codebase works without spending 3 days reading source files.
+      This guide assumes you know what React, TypeScript, and REST APIs are. If you don't — Google them first.
+    </div>
+  </section>
+
+  <!-- SECTION 1: TECH STACK -->
+  <section class="section" id="tech-stack">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <h2>Tech Stack</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">Everything the app is built on. Understand this before touching any code.</p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Next.js 16</div>
+        <div class="card-body">App Router architecture. All pages live in <code>src/app/</code>. API routes are in <code>src/app/api/</code>. Dev mode uses Turbopack (<code>--turbo</code>), production builds use webpack.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🦺</div>
+        <div class="card-title">TypeScript</div>
+        <div class="card-body">Strict types throughout. Key interfaces live in <code>src/types/index.ts</code> and <code>src/types/task.ts</code>. Don't use <code>any</code> unless you absolutely have to.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🗄️</div>
+        <div class="card-title">Supabase</div>
+        <div class="card-body">PostgreSQL database. Two clients: <code>supabase</code> (browser, anon key, respects RLS) and <code>supabaseAdmin</code> (server-only, service key, bypasses RLS). Never use the admin client in browser code.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔐</div>
+        <div class="card-title">Custom JWT Auth</div>
+        <div class="card-body">NOT Supabase Auth. Custom email+password login with bcrypt hashing and JWT tokens stored in httpOnly cookies (7-day expiry). Sessions also tracked in a <code>login_sessions</code> table.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">✏️</div>
+        <div class="card-title">CodeMirror 6</div>
+        <div class="card-body">The core text editor. Loaded dynamically (no SSR) via <code>@uiw/react-codemirror</code>. Handles Markdown syntax highlighting, keybindings, and the Find &amp; Replace panel.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">👁️</div>
+        <div class="card-title">react-markdown</div>
+        <div class="card-body">Renders the live preview pane. Extended with <code>remark-gfm</code> (tables, task lists, strikethrough), <code>rehype-highlight</code> (code blocks), and <code>rehype-slug</code> (heading IDs for outline sidebar).</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎨</div>
+        <div class="card-title">Tailwind CSS</div>
+        <div class="card-body">Utility-first styling. But the dashboard and editor also use heavy custom CSS with CSS variables for theming. You'll see both approaches — Tailwind classes AND inline styles with <code>var(--accent)</code> etc.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📦</div>
+        <div class="card-title">Serwist (PWA)</div>
+        <div class="card-body">Wraps <code>next.config.mjs</code> to generate a service worker. Disabled in dev (Turbopack can't compile it). The service worker lives at <code>src/app/sw.ts</code> and handles push notifications and offline caching.</div>
+      </div>
+    </div>
+
+    <details>
+      <summary>Other notable dependencies</summary>
+      <div class="detail-body">
+        <p><strong>mammoth</strong> — converts <code>.docx</code> files to HTML, which then gets turned into Markdown via <strong>turndown</strong> + <strong>turndown-plugin-gfm</strong>. This is the "import Word doc" feature in the editor.</p>
+        <p><strong>web-push</strong> — sends browser push notifications via VAPID. Keys are in <code>push-keys.json</code> and <code>.env</code>. The VAPID private key should never be committed to git.</p>
+        <p><strong>jose</strong> + <strong>jsonwebtoken</strong> — JWT utilities. <code>jose</code> is the modern one, <code>jsonwebtoken</code> is also present. <code>src/lib/auth.ts</code> uses <code>jsonwebtoken</code>.</p>
+        <p><strong>react-easy-crop</strong> — the avatar cropping modal in the profile settings.</p>
+        <p><strong>@google-analytics/data</strong> — the Marketing dashboard calls Google Analytics 4 Data API to show real-time site metrics. Requires a GCP service account.</p>
+        <p><strong>googleapis</strong> — used alongside the GA4 client for broader Google APIs access.</p>
+        <p><strong>clsx</strong> — utility for conditionally joining CSS class names.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- SECTION 2: SETUP -->
+  <section class="section" id="setup">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <h2>Local Setup</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">How to get this running on your machine in under 5 minutes (assuming you have Node.js installed).</p>
+
+    <pre><span class="label">TERMINAL</span><span class="cmt"># 1. Clone or unzip the project</span>
+cd project-scribe-main
+
+<span class="cmt"># 2. Install dependencies (~60 packages)</span>
+npm install
+
+<span class="cmt"># 3. Create your .env.local file (see next section)</span>
+cp .env.example .env.local   <span class="cmt"># if this file exists</span>
+<span class="cmt"># Otherwise create .env.local manually with the vars listed below</span>
+
+<span class="cmt"># 4. Run the dev server (uses Turbopack)</span>
+npm run dev
+
+<span class="cmt"># Open http://localhost:3000</span>
+<span class="cmt"># The login page appears — you need a user in Supabase to log in</span>
+</pre>
+
+    <div class="callout warn">
+      <strong>Warning:</strong> The service worker (PWA) is <strong>disabled in development</strong>. This is intentional — Turbopack doesn't support Serwist's webpack plugin. Push notifications only work in production. Don't panic if they're not working locally.
+    </div>
+
+    <h3 style="font-size:14px;font-weight:600;margin:24px 0 12px;letter-spacing:0.02em;">Production Build</h3>
+    <pre><span class="label">TERMINAL</span><span class="cmt"># Build uses webpack (not Turbopack) — see package.json</span>
+npm run build   <span class="cmt"># = next build --webpack</span>
+npm run start   <span class="cmt"># serves the built output on :3000</span>
+</pre>
+
+    <div class="callout">
+      <strong>Creating your first user:</strong> There's no sign-up page — accounts are created manually in Supabase.
+      Go to your Supabase dashboard → Table Editor → <code>users</code> table → Insert row.
+      The password field must be a bcrypt hash. You can generate one with Node.js:
+      <br/><br/>
+      <code>node -e "const b=require('bcryptjs'); b.hash('yourpassword',10).then(console.log)"</code>
+    </div>
+  </section>
+
+  <!-- SECTION 3: ENV VARS -->
+  <section class="section" id="env-vars">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <h2>Environment Variables</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">Create a <code>.env.local</code> file in the root directory with these variables. <strong>Never commit this file to git.</strong></p>
+
+    <table class="env-table">
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Required?</th>
+          <th>Where to get it</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>NEXT_PUBLIC_SUPABASE_URL</code></td>
+          <td><span class="req-badge required">Required</span></td>
+          <td>Supabase Dashboard → Settings → API → Project URL</td>
+        </tr>
+        <tr>
+          <td><code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code></td>
+          <td><span class="req-badge required">Required</span></td>
+          <td>Supabase Dashboard → Settings → API → anon public key</td>
+        </tr>
+        <tr>
+          <td><code>SUPABASE_SERVICE_ROLE_KEY</code></td>
+          <td><span class="req-badge required">Required</span></td>
+          <td>Supabase Dashboard → Settings → API → service_role secret key. <strong>Never expose this to the browser.</strong></td>
+        </tr>
+        <tr>
+          <td><code>JWT_SECRET</code></td>
+          <td><span class="req-badge required">Required</span></td>
+          <td>Any long random string. Used to sign auth tokens. Run <code>openssl rand -hex 32</code> to generate one.</td>
+        </tr>
+        <tr>
+          <td><code>NEXT_PUBLIC_VAPID_PUBLIC_KEY</code></td>
+          <td><span class="req-badge optional">Optional</span></td>
+          <td>VAPID key for push notifications. Already in <code>push-keys.json</code> (but rotate in production!). Run <code>node scripts/generate-vapid.js</code> to create new ones.</td>
+        </tr>
+        <tr>
+          <td><code>VAPID_PRIVATE_KEY</code></td>
+          <td><span class="req-badge optional">Optional</span></td>
+          <td>Pair with the above public key. In <code>push-keys.json</code>. Server-side only.</td>
+        </tr>
+        <tr>
+          <td><code>GOOGLE_ANALYTICS_PROPERTY_ID</code></td>
+          <td><span class="req-badge optional">Optional</span></td>
+          <td>GA4 property ID (numeric). Only needed for the Marketing dashboard analytics widget.</td>
+        </tr>
+        <tr>
+          <td><code>GOOGLE_CLIENT_EMAIL</code></td>
+          <td><span class="req-badge optional">Optional</span></td>
+          <td>GCP Service Account email for GA4 API access.</td>
+        </tr>
+        <tr>
+          <td><code>GOOGLE_PRIVATE_KEY</code></td>
+          <td><span class="req-badge optional">Optional</span></td>
+          <td>GCP Service Account private key. Keep newlines escaped as <code>\n</code> in the .env file.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout danger">
+      <strong>Security note:</strong> The <code>push-keys.json</code> file in the repo already contains VAPID keys.
+      These should be <strong>regenerated</strong> for any real deployment — they're committed only for developer convenience.
+      Run <code>node scripts/generate-vapid.js</code> to get new ones.
+    </div>
+  </section>
+
+  <!-- SECTION 4: DEPLOYMENT -->
+  <section class="section" id="deployment">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <h2>Deployment</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">The project is designed for Vercel. Zero config — Vercel auto-detects Next.js.</p>
+
+    <div class="cards" style="grid-template-columns:1fr 1fr;">
+      <div class="card">
+        <div class="card-title">Option A — Vercel CLI</div>
+        <div class="card-body">
+          <code>npm install -g vercel</code><br/>
+          <code>vercel</code><br/><br/>
+          Follow the prompts. It will ask about framework (Next.js) and then deploy.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Option B — GitHub + Dashboard</div>
+        <div class="card-body">
+          Push repo to GitHub → Go to vercel.com/new → Import repo → Framework auto-detected → Add env vars in the Vercel dashboard → Click Deploy.
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Cron job:</strong> <code>vercel.json</code> schedules a daily push reminder at 02:30 UTC via
+      <code>GET /api/push/remind</code>. This sends task-due-soon push notifications to all users.
+      Vercel Cron runs this automatically on Pro plans.
+    </div>
+
+    <details>
+      <summary>What gets built at deploy time?</summary>
+      <div class="detail-body">
+        <p>During <code>next build --webpack</code>, Serwist generates <code>public/sw.js</code> (the service worker with precache manifest). This is what makes the PWA work in production.</p>
+        <p>The Supabase image hostname (<code>wqhsgljvthewgcjjivga.supabase.co</code>) is allowlisted in <code>next.config.mjs</code> for Next.js Image optimization. If you migrate to a different Supabase project, update this hostname.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- SECTION 5: FILE STRUCTURE -->
+  <section class="section" id="file-structure">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <h2>File Structure</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+
+    <div class="tree">
+<span class="dir">project-scribe-main/</span>
+├── <span class="special">next.config.mjs</span>       <span class="comment">Next.js + Serwist PWA config</span>
+├── <span class="special">vercel.json</span>           <span class="comment">Cron job: daily push reminder at 02:30 UTC</span>
+├── <span class="special">push-keys.json</span>        <span class="comment">VAPID public/private keys (rotate in prod!)</span>
+├── <span class="special">tailwind.config.ts</span>    <span class="comment">Tailwind setup</span>
+├── <span class="special">tsconfig.json</span>
+├── <span class="dir">scripts/</span>
+│   └── <span class="file">generate-vapid.js</span>  <span class="comment">Run to generate new VAPID push keys</span>
+├── <span class="dir">public/</span>
+│   ├── <span class="file">logo.svg</span> / <span class="file">logo.png</span>
+│   ├── <span class="file">manifest.json</span>         <span class="comment">PWA manifest (name, icons, theme_color)</span>
+│   ├── <span class="dir">icons/</span>                <span class="comment">SVG icons for department dashboards</span>
+│   └── <span class="file">splash-*.png</span>          <span class="comment">iOS launch screen images</span>
+└── <span class="dir">src/</span>
+    ├── <span class="dir">app/</span>                  <span class="comment">Next.js App Router pages and API</span>
+    │   ├── <span class="file">globals.css</span>       <span class="comment">All CSS variables, animations, global styles</span>
+    │   ├── <span class="file">layout.tsx</span>        <span class="comment">Root HTML shell, fonts, PWA splash, ThemeInitializer</span>
+    │   ├── <span class="file">page.tsx</span>          <span class="comment">Main dashboard (department-aware)</span>
+    │   ├── <span class="dir">editor/</span>
+    │   │   └── <span class="file">page.tsx</span>      <span class="comment">The Markdown editor (tabs, save, preview)</span>
+    │   ├── <span class="dir">login/</span>
+    │   │   └── <span class="file">page.tsx</span>      <span class="comment">Login page (editorial newspaper layout)</span>
+    │   ├── <span class="dir">tasks/page.tsx</span>    <span class="comment">Task management board</span>
+    │   ├── <span class="dir">team/page.tsx</span>     <span class="comment">Team roster</span>
+    │   ├── <span class="dir">profile/page.tsx</span>  <span class="comment">User profile &amp; settings</span>
+    │   ├── <span class="dir">queues/page.tsx</span>   <span class="comment">Proofreading and review queues</span>
+    │   ├── <span class="dir">admin/applications/page.tsx</span>  <span class="comment">Admin: view applications</span>
+    │   ├── <span class="file">sw.ts</span>             <span class="comment">Service worker (Serwist + push handlers)</span>
+    │   └── <span class="dir">api/</span>              <span class="comment">All server-side API endpoints</span>
+    │       ├── <span class="dir">auth/</span>          <span class="comment">login, logout, me</span>
+    │       ├── <span class="dir">documents/</span>     <span class="comment">list + delete across all content tables</span>
+    │       ├── <span class="dir">editor/</span>        <span class="comment">load and save documents</span>
+    │       ├── <span class="dir">tasks/</span>         <span class="comment">CRUD for work_assignments</span>
+    │       ├── <span class="dir">content/</span>       <span class="comment">Public content endpoints (blogs, articles etc.)</span>
+    │       ├── <span class="dir">designs/</span>       <span class="comment">Design Lab dashboard data</span>
+    │       ├── <span class="dir">analytics/</span>     <span class="comment">Google Analytics 4 data (Marketing dept.)</span>
+    │       ├── <span class="dir">push/</span>          <span class="comment">subscribe, unsubscribe, remind (cron)</span>
+    │       ├── <span class="dir">upload/</span>        <span class="comment">File upload to Supabase Storage</span>
+    │       ├── <span class="dir">github/stats/</span>  <span class="comment">GitHub repo stats (Dev dept.)</span>
+    │       ├── <span class="dir">applications/</span>  <span class="comment">Foundation volunteer applications</span>
+    │       ├── <span class="dir">team/</span>          <span class="comment">Team member list</span>
+    │       └── <span class="dir">users/</span>         <span class="comment">Update profile, upload avatar</span>
+    ├── <span class="dir">components/</span>           <span class="comment">All React UI components</span>
+    │   ├── <span class="file">EditorPane.tsx</span>    <span class="comment">CodeMirror 6 wrapper with custom Carcino theme</span>
+    │   ├── <span class="file">PreviewPane.tsx</span>   <span class="comment">react-markdown live preview</span>
+    │   ├── <span class="file">Header.tsx</span>        <span class="comment">Editor top bar (view mode, actions)</span>
+    │   ├── <span class="file">Toolbar.tsx</span>       <span class="comment">Formatting toolbar (bold, italic, tables etc.)</span>
+    │   ├── <span class="file">OutlineSidebar.tsx</span> <span class="comment">Heading outline with active tracking</span>
+    │   ├── <span class="file">StatusBar.tsx</span>     <span class="comment">Words, chars, reading time, cursor pos</span>
+    │   ├── <span class="file">MetadataPanel.tsx</span> <span class="comment">Slug, content type, status, tags</span>
+    │   ├── <span class="file">SettingsModal.tsx</span> <span class="comment">Theme picker, editor preferences</span>
+    │   ├── <span class="file">*Dashboard.tsx</span>    <span class="comment">One per department (Writers, Design, Dev, Marketing, Leadership)</span>
+    │   ├── <span class="file">TaskCard.tsx</span>      <span class="comment">Single task card for the board</span>
+    │   ├── <span class="file">PushSubscriber.tsx</span> <span class="comment">Registers browser for push notifications</span>
+    │   └── <span class="file">ThemeInitializer.tsx</span> <span class="comment">Applies saved theme on first render (avoids flash)</span>
+    ├── <span class="dir">lib/</span>                  <span class="comment">Shared utilities and hooks</span>
+    │   ├── <span class="file">auth.ts</span>           <span class="comment">hashPassword, comparePassword, signToken, verifyToken</span>
+    │   ├── <span class="file">supabase.ts</span>       <span class="comment">Browser Supabase client (anon key)</span>
+    │   ├── <span class="file">supabaseAdmin.ts</span>  <span class="comment">Server Supabase client (service key) — SERVER ONLY</span>
+    │   ├── <span class="file">supabaseServer.ts</span> <span class="comment">Additional server helpers</span>
+    │   ├── <span class="file">useUser.ts</span>        <span class="comment">Hook: cached current user with SWR-style refresh</span>
+    │   ├── <span class="file">useTheme.ts</span>       <span class="comment">Hook: dark/light theme state + toggle</span>
+    │   ├── <span class="file">usePushSubscription.ts</span> <span class="comment">Hook: manage browser push subscription</span>
+    │   ├── <span class="file">pushNotify.ts</span>     <span class="comment">Server: send push to a user via web-push</span>
+    │   ├── <span class="file">document-utils.ts</span> <span class="comment">DOCX → Markdown converter</span>
+    │   └── <span class="file">utils.ts</span>          <span class="comment">Date helpers, word count, greeting, excerpt</span>
+    ├── <span class="dir">config/</span>
+    │   └── <span class="file">departments.ts</span>    <span class="comment">DEPARTMENTS array with keys, labels, icons, colors</span>
+    └── <span class="dir">types/</span>
+        ├── <span class="file">index.ts</span>          <span class="comment">ViewMode, Heading, EditorAPI, DocumentStats, TourStep, Collaborator</span>
+        └── <span class="file">task.ts</span>           <span class="comment">Task interface with status and category enums</span>
+    </div>
+  </section>
+
+  <!-- SECTION 6: AUTH -->
+  <section class="section" id="auth">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <h2>Auth System</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">
+      This project uses a completely <strong>custom auth system</strong>, not Supabase Auth.
+      That's an important distinction — don't confuse the two.
+    </p>
+
+    <div class="callout danger">
+      <strong>Critical:</strong> Supabase Auth is NOT used. Row Level Security (RLS) policies in Supabase should NOT rely on <code>auth.uid()</code> because users are not logged in through Supabase. All API routes use the <code>supabaseAdmin</code> client which bypasses RLS entirely.
+    </div>
+
+    <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;">Login Flow</h3>
+    <div class="flow">
+      <div class="flow-step">User submits<br/>email + password</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step accent">POST /api/auth/login</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Fetch user<br/>from Supabase</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">bcrypt.compare<br/>password vs hash</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step green">Sign JWT<br/>(7 days)</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Set httpOnly<br/>cookie: cw_token</div>
+    </div>
+
+    <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;">How Routes are Protected</h3>
+    <p style="font-size:12px;color:var(--mid);margin-bottom:16px;line-height:1.8;">Every API route that needs auth does this exact pattern:</p>
+
+    <pre><span class="cmt">// Every protected API route follows this exact pattern:</span>
+<span class="kw">const</span> token = req.cookies.get(<span class="str">'cw_token'</span>)?.value;
+<span class="kw">if</span> (!token) <span class="kw">return</span> <span class="fn">NextResponse.json</span>({ error: <span class="str">'Not authenticated'</span> }, { status: <span class="num">401</span> });
+
+<span class="kw">const</span> payload = <span class="fn">verifyToken</span>(token);  <span class="cmt">// from lib/auth.ts</span>
+<span class="kw">if</span> (!payload) <span class="kw">return</span> <span class="fn">NextResponse.json</span>({ error: <span class="str">'Invalid token'</span> }, { status: <span class="num">401</span> });
+
+<span class="cmt">// payload = { userId, email, name, adminAccess }</span>
+<span class="cmt">// Now use payload.userId to query only the current user's data</span>
+</pre>
+
+    <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;">The JWT Payload</h3>
+    <div class="type-block">
+      <div class="type-block-header">JWTPayload <span>interface</span></div>
+      <div class="type-fields">
+        <div class="type-field"><span class="field-name">userId</span><span class="field-type">string</span><span class="field-desc">Supabase row ID of the user</span></div>
+        <div class="type-field"><span class="field-name">email</span><span class="field-type">string</span><span class="field-desc">User's email address</span></div>
+        <div class="type-field"><span class="field-name">name</span><span class="field-type">string</span><span class="field-desc">User's display name</span></div>
+        <div class="type-field"><span class="field-name">adminAccess</span><span class="field-type">boolean</span><span class="field-desc">If true, can publish content, delete tasks, approve articles, etc.</span></div>
+      </div>
+    </div>
+
+    <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;">Client-Side User State</h3>
+    <p style="font-size:12px;color:var(--mid);margin-bottom:12px;line-height:1.8;">The <code>useUser()</code> hook in <code>src/lib/useUser.ts</code> handles this with a 3-layer caching strategy:</p>
+
+    <div class="flow" style="flex-direction:column;align-items:flex-start;gap:4px;">
+      <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mid);">
+        <div class="flow-step" style="font-size:10px;padding:6px 12px;">1. In-memory cache</div>
+        <span>→ fastest, survives hot reloads in dev</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mid);">
+        <div class="flow-step" style="font-size:10px;padding:6px 12px;">2. localStorage cache</div>
+        <span>→ survives page refresh, shows user instantly</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mid);">
+        <div class="flow-step accent" style="font-size:10px;padding:6px 12px;">3. GET /api/auth/me</div>
+        <span>→ always runs in background to keep data fresh</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 7: DATABASE -->
+  <section class="section" id="database">
+    <div class="section-header">
+      <div class="section-num">07</div>
+      <h2>Database (Supabase)</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">The database is Supabase-hosted PostgreSQL. Here are all the tables you need to know about.</p>
+
+    <details open>
+      <summary>users — the people who log in</summary>
+      <div class="detail-body">
+        <div class="type-block" style="margin-top:12px;">
+          <div class="type-block-header">users table</div>
+          <div class="type-fields">
+            <div class="type-field"><span class="field-name">id</span><span class="field-type">uuid</span><span class="field-desc">Primary key</span></div>
+            <div class="type-field"><span class="field-name">name</span><span class="field-type">text</span><span class="field-desc">Display name</span></div>
+            <div class="type-field"><span class="field-name">email</span><span class="field-type">text</span><span class="field-desc">Unique. Used for login.</span></div>
+            <div class="type-field"><span class="field-name">password</span><span class="field-type">text</span><span class="field-desc">bcrypt hash. Never store plaintext.</span></div>
+            <div class="type-field"><span class="field-name">admin_access</span><span class="field-type">boolean</span><span class="field-desc">Can publish content, approve articles, assign tasks</span></div>
+            <div class="type-field"><span class="field-name">department</span><span class="field-type">text</span><span class="field-desc">One of: "Writers' Block", "Design Lab", "Development", "Marketing", "Leadership"</span></div>
+            <div class="type-field"><span class="field-name">avatar_url</span><span class="field-type">text?</span><span class="field-desc">Public URL from Supabase Storage</span></div>
+            <div class="type-field"><span class="field-name">is_active</span><span class="field-type">boolean</span><span class="field-desc">If false, login is blocked with "Account is inactive"</span></div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Content tables — blogs, cancer_docs, survivor_stories</summary>
+      <div class="detail-body">
+        <p>There are <strong>3 separate content tables</strong>, not one. They all have similar columns but subtle differences:</p>
+        <div class="type-block" style="margin-top:12px;">
+          <div class="type-block-header">blogs / cancer_docs / survivor_stories</div>
+          <div class="type-fields">
+            <div class="type-field"><span class="field-name">id</span><span class="field-type">uuid</span><span class="field-desc">Primary key</span></div>
+            <div class="type-field"><span class="field-name">title / name</span><span class="field-type">text</span><span class="field-desc"><strong>survivor_stories uses <code>name</code>, not <code>title</code></strong>. This trips people up. The editor normalizes it.</span></div>
+            <div class="type-field"><span class="field-name">slug</span><span class="field-type">text</span><span class="field-desc">URL-safe identifier. Must be unique per table.</span></div>
+            <div class="type-field"><span class="field-name">content</span><span class="field-type">text</span><span class="field-desc">Raw Markdown content</span></div>
+            <div class="type-field"><span class="field-name">status</span><span class="field-type">text</span><span class="field-desc">"draft" | "in_review" | "published". Note: the UI uses "review" but the DB stores "in_review".</span></div>
+            <div class="type-field"><span class="field-name">author_id</span><span class="field-type">uuid</span><span class="field-desc">FK to users.id</span></div>
+            <div class="type-field"><span class="field-name">tags</span><span class="field-type">text[]</span><span class="field-desc">Array of tags. <strong>cancer_docs does NOT support tags</strong> — omit this column for that table.</span></div>
+            <div class="type-field"><span class="field-name">words</span><span class="field-type">integer</span><span class="field-desc">Word count (denormalized for dashboard stats)</span></div>
+          </div>
+        </div>
+        <p>When the user changes the content type in the editor (e.g. from <code>blogs</code> to <code>cancer_docs</code>), the save API detects the mismatch, inserts into the new table, and deletes from the old one — preserving the document ID.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>work_assignments — the task system</summary>
+      <div class="detail-body">
+        <div class="type-block" style="margin-top:12px;">
+          <div class="type-block-header">work_assignments table</div>
+          <div class="type-fields">
+            <div class="type-field"><span class="field-name">id</span><span class="field-type">uuid</span><span class="field-desc">Primary key</span></div>
+            <div class="type-field"><span class="field-name">title</span><span class="field-type">text</span><span class="field-desc">Task name</span></div>
+            <div class="type-field"><span class="field-name">description</span><span class="field-type">text</span><span class="field-desc">Full task description</span></div>
+            <div class="type-field"><span class="field-name">status</span><span class="field-type">text</span><span class="field-desc">See status pipeline below</span></div>
+            <div class="type-field"><span class="field-name">priority</span><span class="field-type">text</span><span class="field-desc">"low" | "normal" | "high"</span></div>
+            <div class="type-field"><span class="field-name">category</span><span class="field-type">text</span><span class="field-desc">"task" | "article" | "blog" | "survivor_story" | "awareness_post"</span></div>
+            <div class="type-field"><span class="field-name">assigned_to</span><span class="field-type">uuid</span><span class="field-desc">Single assignee FK</span></div>
+            <div class="type-field"><span class="field-name">assigned_to_ids</span><span class="field-type">uuid[]</span><span class="field-desc">Multi-assignee array. Either this OR assigned_to is used.</span></div>
+            <div class="type-field"><span class="field-name">assigned_by</span><span class="field-type">uuid</span><span class="field-desc">Who created the task. Only they can delete it.</span></div>
+            <div class="type-field"><span class="field-name">proofreader_id</span><span class="field-type">uuid?</span><span class="field-desc">Assigned proofreader for content tasks</span></div>
+            <div class="type-field"><span class="field-name">document_id</span><span class="field-type">uuid?</span><span class="field-desc">Links task to a content document. Status syncs bidirectionally.</span></div>
+            <div class="type-field"><span class="field-name">due_date</span><span class="field-type">date</span><span class="field-desc">ISO date string</span></div>
+            <div class="type-field"><span class="field-name">submission_media_url</span><span class="field-type">text?</span><span class="field-desc">Uploaded file URL for task submission</span></div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>push_subscriptions — for browser notifications</summary>
+      <div class="detail-body">
+        <p>Stores browser PushSubscription objects per user. Columns: <code>user_id</code>, <code>endpoint</code> (unique per device), <code>p256dh</code> (encryption key), <code>auth</code> (auth secret). Stale/expired subscriptions are auto-deleted when a push fails with HTTP 410.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>login_sessions — active JWT sessions</summary>
+      <div class="detail-body">
+        <p>Tracks active tokens: <code>user_id</code>, <code>token</code> (the full JWT), <code>expires_at</code> (7 days from login). This table exists for potential session revocation — but the logout route currently just clears the cookie rather than deleting from this table (a minor gap worth noting).</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- SECTION 8: API ROUTES -->
+  <section class="section" id="api-routes">
+    <div class="section-header">
+      <div class="section-num">08</div>
+      <h2>API Routes</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">Every API endpoint, what it does, and whether you need to be logged in or an admin.</p>
+
+    <table class="api-table">
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Route</th>
+          <th>Auth</th>
+          <th>What it does</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="method POST">POST</span></td>
+          <td class="route-path">/api/auth/login</td>
+          <td>None</td>
+          <td>Email+password login. Returns user info + sets <code>cw_token</code> httpOnly cookie.</td>
+        </tr>
+        <tr>
+          <td><span class="method POST">POST</span></td>
+          <td class="route-path">/api/auth/logout</td>
+          <td>Cookie</td>
+          <td>Clears the <code>cw_token</code> cookie.</td>
+        </tr>
+        <tr>
+          <td><span class="method GET">GET</span></td>
+          <td class="route-path">/api/auth/me</td>
+          <td>Cookie</td>
+          <td>Returns the current user's full profile from DB (fresh data, not just JWT payload).</td>
+        </tr>
+        <tr>
+          <td><span class="method GET">GET</span></td>
+          <td class="route-path">/api/documents</td>
+          <td>Cookie</td>
+          <td>Fetches all documents (blogs + survivor_stories + cancer_docs) for the current user. Normalizes and sorts by date.</td>
+        </tr>
+        <tr>
+          <td><span class="method DELETE">DELETE</span></td>
+          <td class="route-path">/api/documents?id=&amp;type=</td>
+          <td>Cookie</td>
+          <td>Deletes a document. Pass <code>type</code> = table name (blogs/survivor_stories/cancer_docs).</td>
+        </tr>
+        <tr>
+          <td><span class="method GET">GET</span></td>
+          <td class="route-path">/api/editor/load?id=&amp;type=</td>
+          <td>Cookie</td>
+          <td>Loads a single document into the editor. Normalizes the title field (name vs title).</td>
+        </tr>
+        <tr>
+          <td><span class="method POST">POST</span></td>
+          <td class="route-path">/api/editor/save</td>
+          <td>Cookie</td>
+          <td>Creates or updates a document. Handles cross-table migration when content type changes. Syncs status to work_assignments. Admins only can publish.</td>
+        </tr>
+        <tr>
+          <td><span class="method GET">GET</span></td>
+          <td class="route-path">/api/tasks</td>
+          <td>Cookie</td>
+          <td>Returns work_assignments for the current user (or all, if Leadership/admin). Cached 5 minutes via <code>unstable_cache</code>.</td>
+        </tr>
+        <tr>
+          <td><span class="method PATCH">PATCH</span></td>
+          <td class="route-path">/api/tasks</td>
+          <td>Cookie</td>
+          <td>Updates a task's status, priority, dates, or assignees. Admins can change assignees. Only the task owner can update.</td>
+        </tr>
+        <tr>
+          <td><span class="method DELETE">DELETE</span></td>
+          <td class="route-path">/api/tasks?id=</td>
+          <td>Admin only</td>
+          <td>Deletes a task. Only the user who created it can delete it, and only if they have admin access.</td>
+        </tr>
+        <tr>
+          <td><span class="method POST">POST</span></td>
+          <td class="route-path">/api/tasks/assign</td>
+          <td>Admin only</td>
+          <td>Creates a new work assignment and optionally links it to a document.</td>
+        </tr>
+        <tr>
+          <td><span class="method POST">POST</span></td>
+          <td class="route-path">/api/upload</td>
+          <td>Cookie</td>
+          <td>Uploads an image or video to Supabase Storage bucket <code>task-submissions</code>. Returns public URL. Allowed types: images + mp4/webm/quicktime.</td>
+        </tr>
+        <tr>
+          <td><span class="method GET">GET</span></td>
+          <td class="route-path">/api/analytics</td>
+          <td>Cookie</td>
+          <td>Fetches GA4 data for last 7 days (active users, page views, bounce rate). Cached 10 minutes. Needs GCP service account env vars.</td>
+        </tr>
+        <tr>
+          <td><span class="method POST">POST</span></td>
+          <td class="route-path">/api/push/subscribe</td>
+          <td>Cookie</td>
+          <td>Saves a browser PushSubscription to Supabase. One record per user+endpoint combo (upserted).</td>
+        </tr>
+        <tr>
+          <td><span class="method DELETE">DELETE</span></td>
+          <td class="route-path">/api/push/subscribe</td>
+          <td>Cookie</td>
+          <td>Removes a push subscription (unsubscribe).</td>
+        </tr>
+        <tr>
+          <td><span class="method GET">GET</span></td>
+          <td class="route-path">/api/push/remind</td>
+          <td>Cron</td>
+          <td>Runs daily at 02:30 UTC via Vercel Cron. Sends push notifications about upcoming due tasks.</td>
+        </tr>
+        <tr>
+          <td><span class="method GET">GET</span></td>
+          <td class="route-path">/api/content/blogs</td>
+          <td>None</td>
+          <td>Public endpoint. Returns all published blog posts (for the public website).</td>
+        </tr>
+        <tr>
+          <td><span class="method GET">GET</span></td>
+          <td class="route-path">/api/content/blog/[slug]</td>
+          <td>None</td>
+          <td>Public endpoint. Returns a single published blog by slug.</td>
+        </tr>
+        <tr>
+          <td><span class="method GET">GET</span></td>
+          <td class="route-path">/api/github/stats</td>
+          <td>Cookie</td>
+          <td>Returns GitHub repository stats for the Development dashboard widget.</td>
+        </tr>
+        <tr>
+          <td><span class="method GET">GET</span></td>
+          <td class="route-path">/api/team</td>
+          <td>Cookie</td>
+          <td>Returns all active team members for the Team page roster.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECTION 9: EDITOR -->
+  <section class="section" id="editor">
+    <div class="section-header">
+      <div class="section-num">09</div>
+      <h2>The Editor</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">
+      The editor at <code>/editor</code> is the core content creation tool.
+      It uses CodeMirror 6 as the text engine, supports multiple tabs, and syncs everything to Supabase.
+    </p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">Multi-Tab System</div>
+        <div class="card-body">Each tab is a <code>Tab</code> object with its own content, type, slug, and status. Tabs are persisted to <code>localStorage</code> (key: <code>cs-tabs</code>). You can have multiple documents open at once.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Content Types</div>
+        <div class="card-body">Each tab has a type: <code>blogs</code>, <code>survivor_stories</code>, or <code>cancer_docs</code>. This determines which Supabase table it saves to. Changing type mid-edit migrates the document.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Auto-Save</div>
+        <div class="card-body">Content is saved to <code>localStorage</code> (key: <code>cs-content</code>) every 800ms via debounce. Manual save to Supabase via Ctrl+S or the Save button. Unsaved tabs show a dot indicator.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">View Modes</div>
+        <div class="card-body">Three modes: <code>editor</code> (CodeMirror only), <code>split</code> (editor + preview side by side), <code>preview</code> (preview only). Controlled by the <code>ViewMode</code> type.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">DOCX Import</div>
+        <div class="card-body">Drop a <code>.docx</code> file into the editor → mammoth converts it to HTML → turndown converts HTML to Markdown. Special style maps preserve bullet points and numbered lists.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Collaborator Presence</div>
+        <div class="card-body">The editor subscribes to a Supabase Realtime channel per document. Other users' cursors broadcast via <code>track()</code> and appear as floating name badges. Uses the browser Supabase client (not admin).</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;">The EditorAPI Interface</h3>
+    <p style="font-size:12px;color:var(--mid);margin-bottom:12px;line-height:1.8;">The toolbar and keyboard shortcuts communicate with CodeMirror through a stable <code>EditorAPI</code> ref. This keeps the toolbar decoupled from CodeMirror internals:</p>
+
+    <div class="type-block">
+      <div class="type-block-header">EditorAPI <span>interface (src/types/index.ts)</span></div>
+      <div class="type-fields">
+        <div class="type-field"><span class="field-name">wrapSelection</span><span class="field-type">fn</span><span class="field-desc">Wraps selected text with before/after strings (e.g. <code>**</code> for bold)</span></div>
+        <div class="type-field"><span class="field-name">insertAtCursor</span><span class="field-type">fn</span><span class="field-desc">Inserts a string at the current cursor position</span></div>
+        <div class="type-field"><span class="field-name">prefixLines</span><span class="field-type">fn</span><span class="field-desc">Adds a prefix to all selected lines (e.g. <code>- </code> for bullet list)</span></div>
+        <div class="type-field"><span class="field-name">openSearch</span><span class="field-type">fn</span><span class="field-desc">Opens the CodeMirror Find &amp; Replace panel (Ctrl+H)</span></div>
+        <div class="type-field"><span class="field-name">scrollToLine</span><span class="field-type">fn</span><span class="field-desc">Scrolls the editor to a specific line number (used by Outline Sidebar)</span></div>
+        <div class="type-field"><span class="field-name">focus</span><span class="field-type">fn</span><span class="field-desc">Focuses the editor</span></div>
+        <div class="type-field"><span class="field-name">getValue</span><span class="field-type">fn</span><span class="field-desc">Returns the current content string</span></div>
+      </div>
+    </div>
+
+    <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;">Status Pipeline for Content Documents</h3>
+    <div class="flow">
+      <div class="flow-step">draft</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step amber">in_review</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step green">published</div>
+    </div>
+    <div class="callout warn">
+      <strong>Self-approval is blocked.</strong> An admin cannot publish content they authored themselves.
+      The save API enforces this: if <code>existing.author_id === payload.userId</code> and the new status is <code>published</code>, it returns HTTP 403.
+    </div>
+  </section>
+
+  <!-- SECTION 10: DASHBOARD -->
+  <section class="section" id="dashboard">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <h2>Dashboard & Departments</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">
+      The main page (<code>/</code>) is a single component that renders a completely different dashboard based on the user's <code>department</code> field.
+    </p>
+
+    <div class="dept-grid">
+      <div class="dept-card">
+        <div class="dept-name" style="color:#b07020;">Writers' Block</div>
+        <div class="dept-key">key: "Writers' Block"</div>
+        <div style="font-size:10px;color:var(--mid);margin-top:6px;">Full sidebar with Articles, Blogs, Tasks, Team nav. Document list, word stats, goal tracker.</div>
+      </div>
+      <div class="dept-card">
+        <div class="dept-name" style="color:#2060c0;">Design Lab</div>
+        <div class="dept-key">key: "Design Lab"</div>
+        <div style="font-size:10px;color:var(--mid);margin-top:6px;">DesignLabDashboard.tsx. Shows design projects and impact data.</div>
+      </div>
+      <div class="dept-card">
+        <div class="dept-name" style="color:#2a8a4a;">Development</div>
+        <div class="dept-key">key: "Development"</div>
+        <div style="font-size:10px;color:var(--mid);margin-top:6px;">DevelopmentDashboard.tsx. Shows GitHub repo stats via /api/github/stats.</div>
+      </div>
+      <div class="dept-card">
+        <div class="dept-name" style="color:#c44;">Marketing</div>
+        <div class="dept-key">key: "Marketing"</div>
+        <div style="font-size:10px;color:var(--mid);margin-top:6px;">MarketingDashboard.tsx. Shows live GA4 analytics (page views, bounce rate etc.).</div>
+      </div>
+      <div class="dept-card">
+        <div class="dept-name" style="color:#9875c1;">Leadership</div>
+        <div class="dept-key">key: "Leadership"</div>
+        <div style="font-size:10px;color:var(--mid);margin-top:6px;">Sees ALL assignments. Can switch between dept views. Full admin powers.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>How department detection works:</strong> After login, <code>useUser()</code> fetches the user profile including <code>department</code>. The dashboard sets <code>activeDeptKey</code> from <code>user.department</code>. Leadership users also get a <code>selectedDept</code> dropdown to view other departments' dashboards as an overlay.
+    </div>
+
+    <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;">Command Palette</h3>
+    <p style="font-size:12px;color:var(--mid);margin-bottom:8px;line-height:1.8;">
+      Press <code>Ctrl+K</code> (or <code>⌘K</code> on Mac) to open the command palette from anywhere in the dashboard.
+      It searches documents by title and lists navigation commands with keyboard shortcuts.
+      Results are navigable with arrow keys, selectable with Enter.
+    </p>
+  </section>
+
+  <!-- SECTION 11: TASKS -->
+  <section class="section" id="tasks">
+    <div class="section-header">
+      <div class="section-num">11</div>
+      <h2>Task System</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">
+      Work assignments flow through a status pipeline. Tasks can be linked to documents — when the document status changes, the task status syncs automatically.
+    </p>
+
+    <h3 style="font-size:13px;font-weight:600;margin:0 0 14px;">Status Pipeline</h3>
+    <div class="flow" style="flex-wrap:wrap;">
+      <div class="flow-step">todo</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="background:#2060c0;">in_progress</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step amber">ready_for_proofreading</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="background:#7060a0;">proofreading</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step amber" style="background:#8a6000;">ready_for_upload</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="background:#2060c0;">in_review</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step green">done</div>
+    </div>
+
+    <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;">Task Categories</h3>
+    <div class="statuses">
+      <div class="status-chip" style="color:var(--mid);">task</div>
+      <div class="status-chip" style="color:var(--blue);">article</div>
+      <div class="status-chip" style="color:var(--green);">blog</div>
+      <div class="status-chip" style="color:var(--accent);">survivor_story</div>
+      <div class="status-chip" style="color:var(--amber);">awareness_post</div>
+    </div>
+
+    <div class="callout">
+      <strong>Content tasks vs regular tasks:</strong> If a task category is <code>"task"</code>, completing it opens the <code>TaskSubmissionModal</code> where the user can upload a file (image/video) as proof of completion. Content categories (article, blog etc.) just flip the status directly.
+    </div>
+
+    <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;">Who sees which tasks?</h3>
+    <pre><span class="cmt">// In GET /api/tasks:</span>
+<span class="kw">const</span> isLeadership = payload.adminAccess || userData.department === <span class="str">'Leadership'</span>;
+
+<span class="kw">if</span> (!isLeadership) {
+  <span class="cmt">// Only tasks where you are assigned (single or multi-assign)</span>
+  query = query.<span class="fn">or</span>(<span class="str">`assigned_to.eq.${userId},assigned_to_ids.cs.{${userId}}`</span>);
+}
+<span class="cmt">// Leadership and admins see ALL assignments</span>
+</pre>
+
+    <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;">Queues</h3>
+    <p style="font-size:12px;color:var(--mid);line-height:1.8;">
+      The <code>/queues</code> page shows two special views: the <strong>Proofreader Queue</strong>
+      (tasks in <code>ready_for_proofreading</code> status assigned to the current user as proofreader)
+      and the <strong>Review Queue</strong> (tasks in <code>in_review</code> status for admin sign-off).
+    </p>
+  </section>
+
+  <!-- SECTION 12: PWA -->
+  <section class="section" id="pwa">
+    <div class="section-header">
+      <div class="section-num">12</div>
+      <h2>PWA & Push Notifications</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">
+      Carcino Vantage is a full Progressive Web App — it can be installed on a phone or desktop
+      and receives push notifications even when closed.
+    </p>
+
+    <div class="cards" style="grid-template-columns:1fr 1fr;">
+      <div class="card">
+        <div class="card-title">Service Worker</div>
+        <div class="card-body">Written in <code>src/app/sw.ts</code>. Built by Serwist into <code>public/sw.js</code> during production build. Handles: precaching all static assets, runtime network caching, incoming push events, notification click events (opens the target URL).</div>
+      </div>
+      <div class="card">
+        <div class="card-title">VAPID Push Flow</div>
+        <div class="card-body">
+          1. <code>PushSubscriber.tsx</code> asks permission and calls <code>navigator.serviceWorker.ready</code><br/>
+          2. Sends PushSubscription to <code>POST /api/push/subscribe</code><br/>
+          3. Stored in <code>push_subscriptions</code> table<br/>
+          4. Server sends via <code>web-push</code> in <code>lib/pushNotify.ts</code>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;">Sending a Push Notification (server-side)</h3>
+    <pre><span class="label">lib/pushNotify.ts</span><span class="kw">import</span> { <span class="fn">sendPushToUser</span> } <span class="kw">from</span> <span class="str">'@/lib/pushNotify'</span>;
+
+<span class="kw">await</span> <span class="fn">sendPushToUser</span>(userId, {
+  title: <span class="str">'Task Due Tomorrow'</span>,
+  body:  <span class="str">'Your article draft is due tomorrow!'</span>,
+  url:   <span class="str">'/tasks'</span>,
+  tag:   <span class="str">'task-reminder'</span>,  <span class="cmt">// Collapses duplicate notifications</span>
+});
+</pre>
+
+    <div class="callout">
+      <strong>iOS notes:</strong> The manifest.json, Apple touch icons, and all 5 splash screen PNGs (<code>splash-*.png</code>) are specifically there for iOS "Add to Home Screen" support. iOS requires explicit splash screens for each device resolution. Don't delete them.
+    </div>
+
+    <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;">Generating New VAPID Keys</h3>
+    <pre><span class="label">TERMINAL</span>node scripts/generate-vapid.js
+<span class="cmt"># Copy output to .env.local and push-keys.json</span>
+<span class="cmt"># Also update NEXT_PUBLIC_VAPID_PUBLIC_KEY in Vercel dashboard</span>
+</pre>
+  </section>
+
+  <!-- SECTION 13: THEMES -->
+  <section class="section" id="themes">
+    <div class="section-header">
+      <div class="section-num">13</div>
+      <h2>Theming Engine</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">
+      The entire color system runs on CSS custom properties applied to <code>&lt;html&gt;</code>.
+      There are 4 paired dark/light themes. Preferences are stored in <code>localStorage</code> under the key <code>cs-settings</code>.
+    </p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-title" style="color:#9875c1;">Default Dark / Light</div>
+        <div class="card-body">The default theme. Dark: near-black background, purple accent. Light: warm paper tones.</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:#cba6f7;">Catppuccin Mocha / Latte</div>
+        <div class="card-body">Popular pastel dark/light theme pair. Mocha is dark, Latte is light.</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:#b58900;">Solarized Dark / Light</div>
+        <div class="card-body">The classic Ethan Schoonover palette. Warm tones, yellow accent.</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:#d79921;">Gruvbox Dark / Light</div>
+        <div class="card-body">Retro warm palette. Brown/orange tones.</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;">How it works</h3>
+    <pre><span class="cmt">// 1. SettingsModal defines theme objects with CSS variable sets
+// 2. applySettings() writes them to document.documentElement.style
+// 3. ThemeInitializer runs BEFORE React hydrates (in &lt;head&gt;)
+//    to prevent the white flash on page load
+
+// The &lt;head&gt; script (in layout.tsx):
+<span class="fn">(function</span>() {
+  <span class="kw">var</span> settings = <span class="fn">JSON.parse</span>(localStorage.<span class="fn">getItem</span>(<span class="str">'cs-settings'</span>) || <span class="str">'{}'</span>);
+  <span class="kw">var</span> isDark = settings.theme?.includes(<span class="str">'dark'</span>) || ...;
+  <span class="kw">if</span> (isDark) document.documentElement.classList.<span class="fn">add</span>(<span class="str">'dark'</span>);
+})();
+</pre>
+
+    <h3 style="font-size:13px;font-weight:600;margin:24px 0 12px;">Key CSS Variables</h3>
+    <div class="type-block">
+      <div class="type-block-header">CSS Custom Properties (set on &lt;html&gt; or :root)</div>
+      <div class="type-fields">
+        <div class="type-field"><span class="field-name">--paper</span><span class="field-type">color</span><span class="field-desc">Main background color</span></div>
+        <div class="type-field"><span class="field-name">--cream</span><span class="field-type">color</span><span class="field-desc">Secondary background (sidebar, tab bar)</span></div>
+        <div class="type-field"><span class="field-name">--ink</span><span class="field-type">color</span><span class="field-desc">Primary text color</span></div>
+        <div class="type-field"><span class="field-name">--mid</span><span class="field-type">color</span><span class="field-desc">Secondary/muted text</span></div>
+        <div class="type-field"><span class="field-name">--rule</span><span class="field-type">color</span><span class="field-desc">Border/divider color (usually semi-transparent)</span></div>
+        <div class="type-field"><span class="field-name">--accent</span><span class="field-type">color</span><span class="field-desc">Primary brand color (purple by default)</span></div>
+        <div class="type-field"><span class="field-name">--accent-dim</span><span class="field-type">color</span><span class="field-desc">Very subtle accent tint (used for hover states)</span></div>
+        <div class="type-field"><span class="field-name">--ff-ui</span><span class="field-type">font</span><span class="field-desc">UI font (DM Mono)</span></div>
+        <div class="type-field"><span class="field-name">--ff-display</span><span class="field-type">font</span><span class="field-desc">Display/heading font</span></div>
+        <div class="type-field"><span class="field-name">--ff-mono</span><span class="field-type">font</span><span class="field-desc">Code font (JetBrains Mono)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 14: TYPES -->
+  <section class="section" id="types">
+    <div class="section-header">
+      <div class="section-num">14</div>
+      <h2>TypeScript Types Reference</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+
+    <div class="type-block">
+      <div class="type-block-header">Task <span>src/types/task.ts</span></div>
+      <div class="type-fields">
+        <div class="type-field"><span class="field-name">id</span><span class="field-type">string</span><span class="field-desc">UUID</span></div>
+        <div class="type-field"><span class="field-name">status</span><span class="field-type">enum</span><span class="field-desc">"todo" | "in_progress" | "ready_for_proofreading" | "proofreading" | "ready_for_upload" | "in_review" | "done"</span></div>
+        <div class="type-field"><span class="field-name">priority</span><span class="field-type">enum</span><span class="field-desc">"low" | "normal" | "high"</span></div>
+        <div class="type-field"><span class="field-name">category</span><span class="field-type">enum</span><span class="field-desc">"task" | "article" | "blog" | "survivor_story" | "awareness_post"</span></div>
+        <div class="type-field"><span class="field-name">due_date</span><span class="field-type">string</span><span class="field-desc">ISO date string (YYYY-MM-DD)</span></div>
+        <div class="type-field"><span class="field-name">document_id</span><span class="field-type">string?</span><span class="field-desc">Links to a content document</span></div>
+        <div class="type-field"><span class="field-name">proofreader_id</span><span class="field-type">string?</span><span class="field-desc">Assigned proofreader UUID</span></div>
+      </div>
+    </div>
+
+    <div class="type-block">
+      <div class="type-block-header">ViewMode <span>src/types/index.ts</span></div>
+      <div class="type-fields">
+        <div class="type-field"><span class="field-name">ViewMode</span><span class="field-type">union</span><span class="field-desc">"editor" | "split" | "preview"</span></div>
+      </div>
+    </div>
+
+    <div class="type-block">
+      <div class="type-block-header">DocumentStats <span>src/types/index.ts</span></div>
+      <div class="type-fields">
+        <div class="type-field"><span class="field-name">words</span><span class="field-type">number</span><span class="field-desc">Word count</span></div>
+        <div class="type-field"><span class="field-name">chars</span><span class="field-type">number</span><span class="field-desc">Character count</span></div>
+        <div class="type-field"><span class="field-name">readingTime</span><span class="field-type">number</span><span class="field-desc">Estimated minutes to read (words / 200, min 1)</span></div>
+        <div class="type-field"><span class="field-name">lines</span><span class="field-type">number</span><span class="field-desc">Line count</span></div>
+        <div class="type-field"><span class="field-name">sentences</span><span class="field-type">number</span><span class="field-desc">Sentence count (matches on . ! ?)</span></div>
+      </div>
+    </div>
+
+    <div class="type-block">
+      <div class="type-block-header">Collaborator <span>src/types/index.ts</span></div>
+      <div class="type-fields">
+        <div class="type-field"><span class="field-name">id</span><span class="field-type">string</span><span class="field-desc">User UUID</span></div>
+        <div class="type-field"><span class="field-name">cursor</span><span class="field-type">object?</span><span class="field-desc">{ line, col } — current cursor position, or null if not active</span></div>
+        <div class="type-field"><span class="field-name">lastSeen</span><span class="field-type">number</span><span class="field-desc">Timestamp. Used to remove stale presence after timeout.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 15: UTILS -->
+  <section class="section" id="utils">
+    <div class="section-header">
+      <div class="section-num">15</div>
+      <h2>Utility Functions</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">All in <code>src/lib/utils.ts</code>. Import what you need — nothing has side effects.</p>
+
+    <table class="api-table">
+      <thead><tr><th>Function</th><th>Returns</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>getTodayStr()</code></td><td>string</td><td>Today as "YYYY-MM-DD". No timezone issues — uses <code>toISOString().split('T')[0]</code>.</td></tr>
+        <tr><td><code>getWeekWindow()</code></td><td>array</td><td>Array of last 7 days as <code>{ date, label, isToday }</code>. Used for the activity chart.</td></tr>
+        <tr><td><code>getGreeting(name?)</code></td><td>string</td><td>"Good morning, Alice" based on the current hour. First name only.</td></tr>
+        <tr><td><code>getTodayLabel()</code></td><td>string</td><td>"Sunday, March 29" — long-form human-readable today.</td></tr>
+        <tr><td><code>countWords(text)</code></td><td>number</td><td>Splits on whitespace. Returns 0 for empty/whitespace-only strings.</td></tr>
+        <tr><td><code>excerptFrom(md)</code></td><td>string</td><td>Extracts first meaningful sentence from Markdown (strips heading markers, formatting chars). Max 140 chars.</td></tr>
+        <tr><td><code>fmtDate(iso)</code></td><td>string</td><td>"Mar 29" from an ISO date string.</td></tr>
+        <tr><td><code>fmtWords(n)</code></td><td>string</td><td>"1.3k" for 1300, "850" for 850. For displaying word counts compactly.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECTION 16: GOTCHAS -->
+  <section class="section" id="gotchas">
+    <div class="section-header">
+      <div class="section-num">16</div>
+      <h2>Known Gotchas & Tips</h2>
+    </div>
+    <div class="triple-rule"><div></div><div></div><div></div></div>
+    <p class="section-intro">Things that will definitely trip you up if you don't know about them.</p>
+
+    <details open>
+      <summary>🚨 survivor_stories uses "name" not "title"</summary>
+      <div class="detail-body">
+        <p>The <code>survivor_stories</code> table has a <code>name</code> column for the document title, while <code>blogs</code> and <code>cancer_docs</code> use <code>title</code>. The API normalizes this, but if you're writing raw Supabase queries, remember to check which column you're selecting.</p>
+        <p>In the save route: <code>if (table === 'survivor_stories') { data.name = title; } else { data.title = title; }</code></p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🚨 cancer_docs does NOT support tags</summary>
+      <div class="detail-body">
+        <p>The <code>tags</code> column only exists on <code>blogs</code> and <code>survivor_stories</code>. The save API explicitly skips setting tags when the table is <code>cancer_docs</code>. If you add this column and forget this check, you'll get a Supabase error on save.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🚨 "in_review" in DB, "review" in UI</summary>
+      <div class="detail-body">
+        <p>The database stores status as <code>in_review</code>, but the editor and UI display it as <code>review</code>. The save route converts: <code>const dbStatus = status === 'review' ? 'in_review' : status</code>. The load route converts back. Don't introduce a third version of this string.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🚨 Never import supabaseAdmin in client components</summary>
+      <div class="detail-body">
+        <p><code>src/lib/supabaseAdmin.ts</code> uses the <code>SUPABASE_SERVICE_ROLE_KEY</code> which has full database access bypassing Row Level Security. If this key leaks to the browser, anyone can read and write all data. Only import <code>supabaseAdmin</code> in API route files (<code>src/app/api/</code>) or Server Components.</p>
+        <p>The browser client <code>supabase</code> (from <code>lib/supabase.ts</code>) uses the anon key and is safe for client-side use — but it's mainly used for Realtime (presence) subscriptions in the editor, not data fetching.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🚨 PWA / Service Worker only works in production</summary>
+      <div class="detail-body">
+        <p>The <code>next.config.mjs</code> sets <code>disable: process.env.NODE_ENV !== "production"</code> for Serwist. In <code>npm run dev</code>, there is no service worker, no push notifications, and no offline support. This is expected. To test PWA features, run <code>npm run build && npm run start</code>.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>⚠️ unstable_cache for tasks doesn't invalidate on writes</summary>
+      <div class="detail-body">
+        <p>The <code>GET /api/tasks</code> route uses Next.js's <code>unstable_cache</code> with a 5-minute revalidation window. This means after a task is created or updated, the GET response may show stale data for up to 5 minutes. The UI optimistically updates the local state to compensate. If you need real-time task updates, consider removing the cache or using Supabase Realtime.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>⚠️ VAPID keys in push-keys.json are for development only</summary>
+      <div class="detail-body">
+        <p>The <code>push-keys.json</code> file commits real VAPID keys for developer convenience. In production, generate fresh keys with <code>node scripts/generate-vapid.js</code>, set them in the Vercel dashboard as env vars, and do NOT use the ones in the repo. Also update the <code>publicKey</code> in <code>push-keys.json</code> to match (since it's served to the client).</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>⚠️ The Supabase image hostname is hardcoded in next.config.mjs</summary>
+      <div class="detail-body">
+        <p>The <code>images.remotePatterns</code> in <code>next.config.mjs</code> allowlists the specific Supabase project hostname <code>wqhsgljvthewgcjjivga.supabase.co</code>. If you use a different Supabase project, avatar images won't load — you'll get a Next.js image optimization error. Update this hostname to match your project's URL.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>💡 EditorPane is dynamically imported (no SSR)</summary>
+      <div class="detail-body">
+        <p>CodeMirror uses browser APIs that don't exist on the server. The editor page uses <code>dynamic(() => import('@/components/EditorPane'), { ssr: false })</code>. This means there's a loading spinner on first render before CodeMirror initializes. This is normal and intentional.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>💡 The login page has all its styles inline</summary>
+      <div class="detail-body">
+        <p>The login page uses a massive <code>&lt;style&gt;</code> block inside the component because it predates the global CSS refactor. This is tech debt — the styles could be moved to <code>globals.css</code>. For now, don't be alarmed by the wall of CSS at the top of <code>src/app/login/page.tsx</code>.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span>Carcino Vantage · Developer Guide · v0.1.0 · © 2026 The Carcino Foundation</span>
+    <span>Built with Next.js 16 · Supabase · Vercel</span>
+  </div>
+
+</main>
+</div>
+
+<script>
+// ── Active nav tracking ─────────────────────────────
+const sections = document.querySelectorAll('section[id], div[id]');
+const navLinks  = document.querySelectorAll('.nav-link');
+const currentSectionLabel = document.getElementById('current-section');
+
+const sectionNames = {
+  'overview': 'Overview',
+  'what-is-this': 'What is this?',
+  'tech-stack': 'Tech Stack',
+  'setup': 'Local Setup',
+  'env-vars': 'Env Variables',
+  'deployment': 'Deployment',
+  'file-structure': 'File Structure',
+  'auth': 'Auth System',
+  'database': 'Database',
+  'api-routes': 'API Routes',
+  'editor': 'The Editor',
+  'dashboard': 'Dashboard',
+  'tasks': 'Task System',
+  'pwa': 'PWA',
+  'themes': 'Theming',
+  'types': 'Types',
+  'utils': 'Utils',
+  'gotchas': 'Gotchas',
+};
+
+function setActive(id) {
+  navLinks.forEach(l => l.classList.remove('active'));
+  const target = document.querySelector(`.nav-link[href="#${id}"]`);
+  if (target) target.classList.add('active');
+  if (currentSectionLabel && sectionNames[id]) currentSectionLabel.textContent = sectionNames[id];
+}
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) setActive(entry.target.id);
+  });
+}, { rootMargin: '-40px 0px -60% 0px', threshold: 0 });
+
+sections.forEach(s => observer.observe(s));
+
+// ── Search ─────────────────────────────────────────
+const searchBox = document.getElementById('search-box');
+if (searchBox) {
+  searchBox.addEventListener('input', function() {
+    const q = this.value.trim().toLowerCase();
+    if (!q) {
+      // Remove all highlights
+      document.querySelectorAll('mark').forEach(m => {
+        m.outerHTML = m.textContent;
+      });
+      return;
+    }
+    // Simple: scroll to first section containing the text
+    const allSections = document.querySelectorAll('.section');
+    for (const section of allSections) {
+      if (section.textContent.toLowerCase().includes(q)) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        break;
+      }
+    }
+  });
+}
+
+// ── Smooth nav link clicks ─────────────────────────
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+</body>
+</html>
